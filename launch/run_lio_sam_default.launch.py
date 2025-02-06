@@ -36,7 +36,7 @@ def generate_launch_description():
         Node(
             package='tf2_ros',
             executable='static_transform_publisher',
-            arguments='0.0 0.0 0.0 0.0 0.0 0.0 map odom'.split(' '),
+            arguments='0.0 0.0 0.0 0.0 0.0 0.0 map_liosam odom_liosam'.split(' '),
             parameters=[parameter_file],
             output='screen'
         ),
