@@ -227,6 +227,9 @@ class IMUPreintegration : public ParamServer {
 
   int key = 1;
 
+  int imu_counter = 0;
+  double total_imu_time = 0.0;
+
   // T_bl: tramsform points from lidar frame to imu frame
   gtsam::Pose3 imu2Lidar =
       gtsam::Pose3(gtsam::Rot3(1, 0, 0, 0),
@@ -317,6 +320,8 @@ class IMUPreintegration : public ParamServer {
 
     // make sure we have imu data to integrate
     if (imuQueOpt.empty()) return;
+
+    rclcpp::Time start_time = now();
 
     float p_x = odomMsg->pose.pose.position.x;
     float p_y = odomMsg->pose.pose.position.y;
@@ -518,6 +523,13 @@ class IMUPreintegration : public ParamServer {
 
     ++key;
     doneFirstOpt = true;
+
+    rclcpp::Time end_time = now();
+    total_imu_time += (end_time - start_time).seconds();
+    imu_counter++;
+
+    std::cout << "Average imu time: " << total_imu_time / imu_counter
+              << std::endl;
   }
 
   bool failureDetection(const gtsam::Vector3& velCur,

@@ -163,6 +163,9 @@ class mapOptimization : public ParamServer {
   // scancontext loop closure
   SCManager scManager;
 
+  int map_counter = 0;
+  double total_map_time = 0.0;
+
   std::unique_ptr<tf2_ros::TransformBroadcaster> br;
 
   mapOptimization(const rclcpp::NodeOptions& options)
@@ -304,6 +307,7 @@ class mapOptimization : public ParamServer {
 
     std::lock_guard<std::mutex> lock(mtx);
 
+    rclcpp::Time start_time = now();
     static double timeLastProcessing = -1;
     if (timeLaserInfoCur - timeLastProcessing >= mappingProcessInterval) {
       timeLastProcessing = timeLaserInfoCur;
@@ -324,6 +328,14 @@ class mapOptimization : public ParamServer {
 
       publishFrames();
     }
+    rclcpp::Time end_time = now();
+    double elapsed_time = (end_time - start_time).seconds();
+
+    total_map_time += elapsed_time;
+    map_counter++;
+
+    std::cout << "Average map time: " << total_map_time / map_counter
+              << std::endl;
   }
 
   void gpsHandler(const sensor_msgs::msg::NavSatFix::SharedPtr gpsMsg) {
