@@ -274,7 +274,7 @@ class IMUPreintegration : public ParamServer {
     priorPoseNoise = gtsam::noiseModel::Diagonal::Sigmas(
         (gtsam::Vector(6) << 1e-2, 1e-2, 1e-2, 1e-2, 1e-2, 1e-2)
             .finished());  // rad,rad,rad,m, m, m
-    priorVelNoise = gtsam::noiseModel::Isotropic::Sigma(3, 1);  // m/s
+    priorVelNoise = gtsam::noiseModel::Isotropic::Sigma(3, 1e4);  // m/s
     priorBiasNoise = gtsam::noiseModel::Isotropic::Sigma(
         6, 1e-3);  // 1e-2 ~ 1e-3 seems to be good
     correctionNoise = gtsam::noiseModel::Diagonal::Sigmas(
@@ -528,8 +528,10 @@ class IMUPreintegration : public ParamServer {
     total_imu_time += (end_time - start_time).seconds();
     imu_counter++;
 
-    std::cout << "Average imu time: " << total_imu_time / imu_counter
-              << std::endl;
+    if (imu_counter % 10 == 0) {
+      std::cout << "Average imu time: " << total_imu_time / imu_counter
+                << std::endl;
+    }
   }
 
   bool failureDetection(const gtsam::Vector3& velCur,

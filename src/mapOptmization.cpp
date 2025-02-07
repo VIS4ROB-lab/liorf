@@ -334,8 +334,10 @@ class mapOptimization : public ParamServer {
     total_map_time += elapsed_time;
     map_counter++;
 
-    std::cout << "Average map time: " << total_map_time / map_counter
-              << std::endl;
+    if (map_counter % 10 == 0) {
+      std::cout << "Average map time: " << total_map_time / map_counter
+                << std::endl;
+    }
   }
 
   void gpsHandler(const sensor_msgs::msg::NavSatFix::SharedPtr gpsMsg) {

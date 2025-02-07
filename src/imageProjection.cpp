@@ -215,8 +215,10 @@ class ImageProjection : public ParamServer {
     proj_counter++;
     total_proj_time += elapsed_time;
 
-    std::cout << "Average projection time: " << total_proj_time / proj_counter
-              << std::endl;
+    if (proj_counter % 10 == 0) {
+      std::cout << "Average projection time: " << total_proj_time / proj_counter
+                << std::endl;
+    }
   }
 
   bool cachePointCloud(
