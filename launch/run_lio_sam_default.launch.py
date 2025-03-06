@@ -9,7 +9,7 @@ from launch.conditions import IfCondition
 def generate_launch_description():
 
     share_dir = get_package_share_directory('liorf')
-    rviz_config_file = os.path.join(share_dir, 'rviz', 'mapping.rviz')
+    rviz_config_file = os.path.join(share_dir, 'rviz', 'video.rviz')
 
     rviz_use = LaunchConfiguration('rviz')
     parameter_file = LaunchConfiguration('params_file')
