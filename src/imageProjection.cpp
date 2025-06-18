@@ -264,7 +264,7 @@ class ImageProjection : public ParamServer {
         dst.time = static_cast<float>(src.t);
       }
     }  // <!-- liorf_yjz_lucky_boy -->
-    else if (sensor == SensorType::ROBOSENSE) {
+    else if (sensor == SensorType::ROBOSENSE || sensor == SensorType::HESAI) {
       pcl::PointCloud<RobosensePointXYZIRT>::Ptr tmpRobosenseCloudIn(
           new pcl::PointCloud<RobosensePointXYZIRT>());
       // Convert to robosense format
