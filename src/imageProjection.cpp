@@ -232,6 +232,10 @@ class ImageProjection : public ParamServer {
     cloudQueue.pop_front();
     if (sensor == SensorType::VELODYNE || sensor == SensorType::LIVOX) {
       pcl::moveFromROSMsg(currentCloudMsg, *laserCloudIn);
+      for (size_t i = 0; i < laserCloudIn->size(); i++) {
+        auto &dst = laserCloudIn->points[i];
+        dst.time = (dst.time - laserCloudIn->points[0].time) * 1e-6f;
+      }
     } else if (sensor == SensorType::OUSTER) {
       // Convert to Velodyne format
       pcl::moveFromROSMsg(currentCloudMsg, *tmpOusterCloudIn);
