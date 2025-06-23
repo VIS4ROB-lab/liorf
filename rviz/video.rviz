@@ -4,12 +4,9 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /TF1
         - /TF1/Frames1
         - /TF1/Tree1
-        - /TF1/Tree1/map_liosam1
-        - /TF1/Tree1/map_liosam1/odom_liosam1
-        - /TF1/Tree1/map_liosam1/odom_liosam1/lidar_liosam1
-        - /TF1/Tree1/map_liosam1/odom_liosam1/lidar_liosam1/qt64_lidar1
         - /PointCloud21/Autocompute Value Bounds1
         - /NormalDisplay1/Topic1
       Splitter Ratio: 0.6941176652908325
@@ -40,10 +37,6 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        as_cam2:
-          Value: false
-        as_imu:
-          Value: false
         imu_liosam:
           Value: false
         lidar_liosam:
@@ -52,11 +45,13 @@ Visualization Manager:
           Value: false
         odom_base:
           Value: true
+        odom_lidar:
+          Value: false
         odom_liosam:
           Value: false
-        qt64_lidar:
+        os_lidar:
           Value: false
-        rooster_base:
+        sensor_base:
           Value: true
       Marker Scale: 10
       Name: TF
@@ -64,19 +59,17 @@ Visualization Manager:
       Show Axes: true
       Show Names: false
       Tree:
-        map_liosam:
-          odom_liosam:
-            imu_liosam:
-              {}
-            lidar_liosam:
-              qt64_lidar:
-                as_cam2:
-                  as_imu:
+        odom_base:
+          odom_lidar:
+            odom_liosam:
+              imu_liosam:
+                {}
+              lidar_liosam:
+                os_lidar:
+                  sensor_base:
                     {}
-                rooster_base:
-                  {}
-            odom_base:
-              {}
+              map_liosam:
+                {}
       Update Interval: 0
       Value: true
     - Angle Tolerance: 0.10000000149011612
@@ -194,7 +187,7 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /alphasense_driver_ros/cam0/color/image_rect
       Value: false
-    - Alpha: 0.10000000149011612
+    - Alpha: 0.009999999776482582
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
         Max Value: 10
@@ -304,25 +297,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/XYOrbit
-      Distance: 87.67131042480469
+      Distance: 24.814897537231445
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.004645824432373047
-        Y: 2.559770107269287
-        Z: -4.375616481411271e-05
+        X: 7.992198467254639
+        Y: -10.80276107788086
+        Z: -4.88904734083917e-05
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0010000000474974513
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.829999566078186
+      Pitch: -0.11499997973442078
       Target Frame: odom_base
       Value: XYOrbit (rviz_default_plugins)
-      Yaw: 3.1223950386047363
+      Yaw: 4.710576057434082
     Saved: ~
 Window Geometry:
   Displays:
