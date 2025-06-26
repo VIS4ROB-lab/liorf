@@ -4,12 +4,8 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
-        - /TF1
-        - /TF1/Frames1
-        - /TF1/Tree1
-        - /PointCloud21/Autocompute Value Bounds1
         - /NormalDisplay1/Topic1
-      Splitter Ratio: 0.6941176652908325
+      Splitter Ratio: 0.6352941393852234
     Tree Height: 760
   - Class: rviz_common/Selection
     Name: Selection
@@ -49,10 +45,10 @@ Visualization Manager:
           Value: false
         odom_liosam:
           Value: false
+        qt64_lidar:
+          Value: false
         sensor_base:
           Value: true
-        vlp_lidar:
-          Value: false
       Marker Scale: 10
       Name: TF
       Show Arrows: false
@@ -65,7 +61,7 @@ Visualization Manager:
               imu_liosam:
                 {}
               lidar_liosam:
-                vlp_lidar:
+                qt64_lidar:
                   sensor_base:
                     {}
               map_liosam:
@@ -187,28 +183,28 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /alphasense_driver_ros/cam0/color/image_rect
       Value: false
-    - Alpha: 0.009999999776482582
+    - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 10
-        Min Value: 0
-        Value: false
+        Max Value: 22.177513122558594
+        Min Value: -14.515132904052734
+        Value: true
       Axis: Z
       Channel Name: intensity
       Class: rviz_default_plugins/PointCloud2
       Color: 255; 255; 255
-      Color Transformer: AxisColor
-      Decay Time: 1000
+      Color Transformer: Intensity
+      Decay Time: 0
       Enabled: true
-      Invert Rainbow: false
+      Invert Rainbow: true
       Max Color: 255; 255; 255
-      Max Intensity: 1210
+      Max Intensity: 255
       Min Color: 0; 0; 0
       Min Intensity: 3
       Name: PointCloud2
       Position Transformer: XYZ
       Selectable: false
-      Size (Pixels): 1
+      Size (Pixels): 2
       Size (m): 0.009999999776482582
       Style: Points
       Topic:
@@ -217,7 +213,7 @@ Visualization Manager:
         Filter size: 1
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /liorf/deskew/cloud_deskewed
+        Value: /liorf/mapping/map_global
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
@@ -297,25 +293,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 98.56536865234375
+      Distance: 89.30403137207031
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 7.482841491699219
-        Y: -3.3248708248138428
-        Z: 3.2705330848693848
+        X: 27.599445343017578
+        Y: 18.483964920043945
+        Z: 5.108323097229004
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.8999997973442078
+      Pitch: 0.8849992752075195
       Target Frame: odom_base
       Value: Orbit (rviz_default_plugins)
-      Yaw: 3.040562629699707
+      Yaw: 4.335574150085449
     Saved: ~
 Window Geometry:
   Displays:
