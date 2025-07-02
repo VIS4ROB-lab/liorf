@@ -234,7 +234,13 @@ class ImageProjection : public ParamServer {
       pcl::moveFromROSMsg(currentCloudMsg, *laserCloudIn);
       for (size_t i = 0; i < laserCloudIn->size(); i++) {
         auto &dst = laserCloudIn->points[i];
-        dst.time = (dst.time - laserCloudIn->points[0].time) * 1e-6f;
+        if (dst.time < 0.0) {
+          dst.time = 0.0;
+        } else if (dst.time < 1.0) {
+          dst.time = dst.time;
+        } else {
+          dst.time = (dst.time - laserCloudIn->points[0].time) * 1e-6f;
+        }
       }
     } else if (sensor == SensorType::OUSTER) {
       // Convert to Velodyne format
