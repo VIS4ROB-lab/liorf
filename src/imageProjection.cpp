@@ -241,6 +241,15 @@ class ImageProjection : public ParamServer {
         } else {
           dst.time = (dst.time - laserCloudIn->points[0].time) * 1e-6f;
         }
+        if (std::isnan(dst.x) || std::isinf(dst.x)) {
+          dst.x = 0.0;
+        }
+        if (std::isnan(dst.y) || std::isinf(dst.y)) {
+          dst.y = 0.0;
+        }
+        if (std::isnan(dst.z) || std::isinf(dst.z)) {
+          dst.z = 0.0;
+        }
       }
     } else if (sensor == SensorType::OUSTER) {
       // Convert to Velodyne format
@@ -256,6 +265,15 @@ class ImageProjection : public ParamServer {
         dst.intensity = src.intensity;
         dst.ring = src.ring;
         dst.time = src.t * 1e-9f;
+        if (std::isnan(dst.x) || std::isinf(dst.x)) {
+          dst.x = 0.0;
+        }
+        if (std::isnan(dst.y) || std::isinf(dst.y)) {
+          dst.y = 0.0;
+        }
+        if (std::isnan(dst.z) || std::isinf(dst.z)) {
+          dst.z = 0.0;
+        }
       }
     }  // <!-- liorf_yjz_lucky_boy -->
     else if (sensor == SensorType::MULRAN) {
@@ -272,6 +290,15 @@ class ImageProjection : public ParamServer {
         dst.intensity = src.intensity;
         dst.ring = src.ring;
         dst.time = static_cast<float>(src.t);
+        if (std::isnan(dst.x) || std::isinf(dst.x)) {
+          dst.x = 0.0;
+        }
+        if (std::isnan(dst.y) || std::isinf(dst.y)) {
+          dst.y = 0.0;
+        }
+        if (std::isnan(dst.z) || std::isinf(dst.z)) {
+          dst.z = 0.0;
+        }
       }
     }  // <!-- liorf_yjz_lucky_boy -->
     else if (sensor == SensorType::ROBOSENSE || sensor == SensorType::HESAI) {
@@ -292,6 +319,15 @@ class ImageProjection : public ParamServer {
         dst.intensity = src.intensity;
         dst.ring = src.ring;
         dst.time = src.timestamp - start_stamptime;
+        if (std::isnan(dst.x) || std::isinf(dst.x)) {
+          dst.x = 0.0;
+        }
+        if (std::isnan(dst.y) || std::isinf(dst.y)) {
+          dst.y = 0.0;
+        }
+        if (std::isnan(dst.z) || std::isinf(dst.z)) {
+          dst.z = 0.0;
+        }
       }
     } else {
       RCLCPP_ERROR_STREAM(get_logger(), "Unknown sensor type: " << int(sensor));
@@ -304,30 +340,30 @@ class ImageProjection : public ParamServer {
     timeScanEnd = timeScanCur + laserCloudIn->points.back().time;
 
     // check dense flag
-    if (laserCloudIn->is_dense == false) {
-      RCLCPP_ERROR_STREAM(get_logger(),
-                          "Point cloud is not in dense format, please remove "
-                          "NaN points first!");
-      rclcpp::shutdown();
-    }
+    // if (laserCloudIn->is_dense == false) {
+    //   RCLCPP_ERROR_STREAM(get_logger(),
+    //                       "Point cloud is not in dense format, please remove
+    //                       " "NaN points first!");
+    //   rclcpp::shutdown();
+    // }
 
     // check ring channel
-    static int ringFlag = 0;
-    if (ringFlag == 0) {
-      ringFlag = -1;
-      for (int i = 0; i < (int)currentCloudMsg.fields.size(); ++i) {
-        if (currentCloudMsg.fields[i].name == "ring") {
-          ringFlag = 1;
-          break;
-        }
-      }
-      if (ringFlag == -1) {
-        RCLCPP_ERROR_STREAM(get_logger(),
-                            "Point cloud ring channel not available, please "
-                            "configure your point cloud data!");
-        rclcpp::shutdown();
-      }
-    }
+    // static int ringFlag = 0;
+    // if (ringFlag == 0) {
+    //   ringFlag = -1;
+    //   for (int i = 0; i < (int)currentCloudMsg.fields.size(); ++i) {
+    //     if (currentCloudMsg.fields[i].name == "ring") {
+    //       ringFlag = 1;
+    //       break;
+    //     }
+    //   }
+    //   if (ringFlag == -1) {
+    //     RCLCPP_ERROR_STREAM(get_logger(),
+    //                         "Point cloud ring channel not available, please "
+    //                         "configure your point cloud data!");
+    //     rclcpp::shutdown();
+    //   }
+    // }
 
     // check point time
     if (deskewFlag == 0) {
