@@ -290,6 +290,28 @@ class mapOptimization : public ParamServer {
     matP = cv::Mat(6, 6, CV_32F, cv::Scalar::all(0));
   }
 
+  void compute_ram_usage() {
+    double vm_usage = 0.0;
+    double resident_set = 0.0;
+    std::ifstream stat_stream("/proc/self/stat", std::ios_base::in);
+    std::string pid, comm, state, ppid, pgrp, session, tty_nr;
+    std::string tpgid, flags, minflt, cminflt, majflt, cmajflt;
+    std::string utime, stime, cutime, cstime, priority, nice;
+    std::string num_threads, itrealvalue, starttime;
+    unsigned long vsize;
+    long rss;
+    stat_stream >> pid >> comm >> state >> ppid >> pgrp >> session >> tty_nr >>
+        tpgid >> flags >> minflt >> cminflt >> majflt >> cmajflt >> utime >>
+        stime >> cutime >> cstime >> priority >> nice >> num_threads >>
+        itrealvalue >> starttime >> vsize >> rss;
+    stat_stream.close();
+    long page_size_kb = sysconf(_SC_PAGE_SIZE) / 1024;
+    vm_usage = vsize / 1024.0;
+    resident_set = rss * page_size_kb;
+
+    std::cout << "RAM usage: " << round(resident_set / 1000.0) << std::endl;
+  }
+
   void laserCloudInfoHandler(const liorf::msg::CloudInfo::SharedPtr msgIn) {
     // extract time stamp
     timeLaserInfoStamp = msgIn->header.stamp;
@@ -337,6 +359,7 @@ class mapOptimization : public ParamServer {
     if (map_counter % 10 == 0) {
       std::cout << "Average map time: " << total_map_time / map_counter
                 << std::endl;
+      compute_ram_usage();
     }
   }
 
