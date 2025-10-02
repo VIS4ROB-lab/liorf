@@ -255,7 +255,7 @@ class IMUPreintegration : public ParamServer {
         odomTopic + "_incremental",
         QosPolicy(history_policy, reliability_policy));
 
-    boost::shared_ptr<gtsam::PreintegrationParams> p =
+    std::shared_ptr<gtsam::PreintegrationParams> p =
         gtsam::PreintegrationParams::MakeSharedU(imuGravity);
     p->accelerometerCovariance =
         gtsam::Matrix33::Identity(3, 3) *
