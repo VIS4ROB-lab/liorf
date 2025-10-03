@@ -235,7 +235,7 @@ class ImageProjection : public ParamServer {
       for (size_t i = 0; i < laserCloudIn->size(); i++) {
         auto &dst = laserCloudIn->points[i];
         if (dst.time < 0.0) {
-          dst.time = 0.0;
+          dst.time = 0.1 + dst.time;
         } else if (dst.time < 1.0) {
           dst.time = dst.time;
         } else {
