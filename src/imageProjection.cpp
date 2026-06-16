@@ -14,6 +14,19 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(
                                             intensity)(uint16_t, ring,
                                                        ring)(float, time, time))
 
+struct LivoxPointXYZIRT {
+  PCL_ADD_POINT4D;
+  PCL_ADD_INTENSITY
+  uint8_t tag;
+  uint8_t line;
+  double timestamp;
+  EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+} EIGEN_ALIGN16;
+POINT_CLOUD_REGISTER_POINT_STRUCT(
+    LivoxPointXYZIRT,
+    (float, x, x)(float, y, y)(float, z, z)(float, intensity, intensity)(
+        uint8_t, tag, tag)(uint8_t, line, line)(double, timestamp, timestamp))
+
 struct OusterPointXYZIRT {
   PCL_ADD_POINT4D;
   float intensity;
@@ -79,10 +92,10 @@ class ImageProjection : public ParamServer {
   std::deque<sensor_msgs::msg::PointCloud2> cloudQueue;
   sensor_msgs::msg::PointCloud2 currentCloudMsg;
 
-  double *imuTime = new double[queueLength];
-  double *imuRotX = new double[queueLength];
-  double *imuRotY = new double[queueLength];
-  double *imuRotZ = new double[queueLength];
+  double* imuTime = new double[queueLength];
+  double* imuRotX = new double[queueLength];
+  double* imuRotY = new double[queueLength];
+  double* imuRotZ = new double[queueLength];
 
   int imuPointerCur;
   bool firstPointFlag;
@@ -90,6 +103,7 @@ class ImageProjection : public ParamServer {
 
   pcl::PointCloud<PointXYZIRT>::Ptr laserCloudIn;
   pcl::PointCloud<OusterPointXYZIRT>::Ptr tmpOusterCloudIn;
+  pcl::PointCloud<LivoxPointXYZIRT>::Ptr tmpLivoxCloudIn;
   pcl::PointCloud<MulranPointXYZIRT>::Ptr tmpMulranCloudIn;
   pcl::PointCloud<PointType>::Ptr fullCloud;
 
@@ -109,7 +123,7 @@ class ImageProjection : public ParamServer {
   double total_proj_time = 0.0;
 
  public:
-  ImageProjection(const rclcpp::NodeOptions &options)
+  ImageProjection(const rclcpp::NodeOptions& options)
       : ParamServer("liorf_imageProjection", options), deskewFlag(0) {
     subImu = create_subscription<sensor_msgs::msg::Imu>(
         imuTopic, QosPolicy(history_policy, reliability_policy),
@@ -142,6 +156,7 @@ class ImageProjection : public ParamServer {
   void allocateMemory() {
     laserCloudIn.reset(new pcl::PointCloud<PointXYZIRT>());
     tmpOusterCloudIn.reset(new pcl::PointCloud<OusterPointXYZIRT>());
+    tmpLivoxCloudIn.reset(new pcl::PointCloud<LivoxPointXYZIRT>());
     tmpMulranCloudIn.reset(new pcl::PointCloud<MulranPointXYZIRT>());
     fullCloud.reset(new pcl::PointCloud<PointType>());
 
@@ -222,7 +237,7 @@ class ImageProjection : public ParamServer {
   }
 
   bool cachePointCloud(
-      const sensor_msgs::msg::PointCloud2::SharedPtr &laserCloudMsg) {
+      const sensor_msgs::msg::PointCloud2::SharedPtr& laserCloudMsg) {
     // cache point cloud
     cloudQueue.push_back(*laserCloudMsg);
     if (cloudQueue.size() <= 2) return false;
@@ -230,10 +245,10 @@ class ImageProjection : public ParamServer {
     // convert cloud
     currentCloudMsg = std::move(cloudQueue.front());
     cloudQueue.pop_front();
-    if (sensor == SensorType::VELODYNE || sensor == SensorType::LIVOX) {
+    if (sensor == SensorType::VELODYNE) {
       pcl::moveFromROSMsg(currentCloudMsg, *laserCloudIn);
       for (size_t i = 0; i < laserCloudIn->size(); i++) {
-        auto &dst = laserCloudIn->points[i];
+        auto& dst = laserCloudIn->points[i];
         if (dst.time < 0.0) {
           dst.time = 0.1 + dst.time;
         } else if (dst.time < 1.0) {
@@ -251,14 +266,39 @@ class ImageProjection : public ParamServer {
           dst.z = 0.0;
         }
       }
+    } else if (sensor == SensorType::LIVOX) {
+      pcl::moveFromROSMsg(currentCloudMsg, *tmpLivoxCloudIn);
+      laserCloudIn->points.resize(tmpLivoxCloudIn->size());
+      laserCloudIn->is_dense = tmpLivoxCloudIn->is_dense;
+
+      double start_stamptime = tmpLivoxCloudIn->points[0].timestamp;
+      for (size_t i = 0; i < tmpLivoxCloudIn->size(); i++) {
+        auto& src = tmpLivoxCloudIn->points[i];
+        auto& dst = laserCloudIn->points[i];
+        dst.x = src.x;
+        dst.y = src.y;
+        dst.z = src.z;
+        dst.intensity = src.intensity;
+        dst.ring = 1;
+        dst.time = (src.timestamp - start_stamptime) * 1e-9f;
+        if (std::isnan(dst.x) || std::isinf(dst.x)) {
+          dst.x = 0.0;
+        }
+        if (std::isnan(dst.y) || std::isinf(dst.y)) {
+          dst.y = 0.0;
+        }
+        if (std::isnan(dst.z) || std::isinf(dst.z)) {
+          dst.z = 0.0;
+        }
+      }
     } else if (sensor == SensorType::OUSTER) {
       // Convert to Velodyne format
       pcl::moveFromROSMsg(currentCloudMsg, *tmpOusterCloudIn);
       laserCloudIn->points.resize(tmpOusterCloudIn->size());
       laserCloudIn->is_dense = tmpOusterCloudIn->is_dense;
       for (size_t i = 0; i < tmpOusterCloudIn->size(); i++) {
-        auto &src = tmpOusterCloudIn->points[i];
-        auto &dst = laserCloudIn->points[i];
+        auto& src = tmpOusterCloudIn->points[i];
+        auto& dst = laserCloudIn->points[i];
         dst.x = src.x;
         dst.y = src.y;
         dst.z = src.z;
@@ -282,8 +322,8 @@ class ImageProjection : public ParamServer {
       laserCloudIn->points.resize(tmpMulranCloudIn->size());
       laserCloudIn->is_dense = tmpMulranCloudIn->is_dense;
       for (size_t i = 0; i < tmpMulranCloudIn->size(); i++) {
-        auto &src = tmpMulranCloudIn->points[i];
-        auto &dst = laserCloudIn->points[i];
+        auto& src = tmpMulranCloudIn->points[i];
+        auto& dst = laserCloudIn->points[i];
         dst.x = src.x;
         dst.y = src.y;
         dst.z = src.z;
@@ -311,8 +351,8 @@ class ImageProjection : public ParamServer {
 
       double start_stamptime = tmpRobosenseCloudIn->points[0].timestamp;
       for (size_t i = 0; i < tmpRobosenseCloudIn->size(); i++) {
-        auto &src = tmpRobosenseCloudIn->points[i];
-        auto &dst = laserCloudIn->points[i];
+        auto& src = tmpRobosenseCloudIn->points[i];
+        auto& dst = laserCloudIn->points[i];
         dst.x = src.x;
         dst.y = src.y;
         dst.z = src.z;
@@ -368,7 +408,7 @@ class ImageProjection : public ParamServer {
     // check point time
     if (deskewFlag == 0) {
       deskewFlag = -1;
-      for (auto &field : currentCloudMsg.fields) {
+      for (auto& field : currentCloudMsg.fields) {
         if (field.name == "time" || field.name == "t" ||
             field.name == "timestamp") {
           deskewFlag = 1;
@@ -545,8 +585,8 @@ class ImageProjection : public ParamServer {
     odomDeskewFlag = true;
   }
 
-  void findRotation(double pointTime, float *rotXCur, float *rotYCur,
-                    float *rotZCur) {
+  void findRotation(double pointTime, float* rotXCur, float* rotYCur,
+                    float* rotZCur) {
     *rotXCur = 0;
     *rotYCur = 0;
     *rotZCur = 0;
@@ -576,8 +616,8 @@ class ImageProjection : public ParamServer {
     }
   }
 
-  void findPosition(double relTime, float *posXCur, float *posYCur,
-                    float *posZCur) {
+  void findPosition(double relTime, float* posXCur, float* posYCur,
+                    float* posZCur) {
     *posXCur = 0;
     *posYCur = 0;
     *posZCur = 0;
@@ -595,7 +635,7 @@ class ImageProjection : public ParamServer {
     // *posZCur = ratio * odomIncreZ;
   }
 
-  PointType deskewPoint(PointType *point, double relTime) {
+  PointType deskewPoint(PointType* point, double relTime) {
     if (deskewFlag == -1 || cloudInfo.imuavailable == false) return *point;
 
     double pointTime = timeScanCur + relTime;
@@ -664,7 +704,7 @@ class ImageProjection : public ParamServer {
   }
 };
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv) {
   rclcpp::init(argc, argv);
 
   rclcpp::NodeOptions options;
