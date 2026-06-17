@@ -4,6 +4,7 @@ Panels:
     Name: Displays
     Property Tree Widget:
       Expanded:
+        - /Global Options1
         - /TF1
         - /TF1/Frames1
       Splitter Ratio: 0.6352941393852234
@@ -38,56 +39,33 @@ Visualization Manager:
           Value: false
         lidar_liosam:
           Value: false
-        livox_frame:
-          Value: false
         map_liosam:
           Value: false
-        odom_alpha:
-          Value: false
-        odom_beta:
-          Value: false
-        odom_gamma:
+        odom_base:
           Value: true
-        odom_imu:
-          Value: false
         odom_lidar:
           Value: false
         odom_liosam:
           Value: false
-        sensor_alpha:
-          Value: false
-        sensor_beta:
-          Value: false
-        sensor_gamma:
+        sensor_base:
           Value: true
-        sensor_imu:
-          Value: false
+        vlp_lidar:
+          Value: true
       Marker Scale: 10
       Name: TF
       Show Arrows: false
       Show Axes: true
       Show Names: false
       Tree:
-        odom_imu:
-          odom_alpha:
-            {}
-          odom_beta:
-            {}
-          odom_gamma:
-            {}
+        odom_base:
           odom_lidar:
             odom_liosam:
               imu_liosam:
                 {}
               lidar_liosam:
-                livox_frame:
-                  sensor_imu:
-                    sensor_alpha:
-                      {}
-                    sensor_beta:
-                      {}
-                    sensor_gamma:
-                      {}
+                vlp_lidar:
+                  sensor_base:
+                    {}
               map_liosam:
                 {}
       Update Interval: 0
@@ -107,7 +85,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: true
       Max Color: 255; 255; 255
-      Max Intensity: 150.16665649414062
+      Max Intensity: 150.3333282470703
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: PointCloud2
@@ -129,7 +107,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 255; 255; 255
-    Fixed Frame: odom_alpha
+    Fixed Frame: odom_base
     Frame Rate: 10
   Name: root
   Tools:
@@ -172,25 +150,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz_default_plugins/Orbit
-      Distance: 46.59512710571289
+      Distance: 123.89173889160156
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 13.804475784301758
-        Y: -8.3489408493042
-        Z: 11.981769561767578
-      Focal Shape Fixed Size: true
+        X: 14.254257202148438
+        Y: -4.615753650665283
+        Z: 0.06907079368829727
+      Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.19499991834163666
+      Pitch: -1.2397966384887695
       Target Frame: odom_base
       Value: Orbit (rviz_default_plugins)
-      Yaw: 4.65056848526001
+      Yaw: 4.805414199829102
     Saved: ~
 Window Geometry:
   Displays:
@@ -209,4 +187,4 @@ Window Geometry:
     collapsed: true
   Width: 960
   X: 960
-  Y: 27
+  Y: 0
